@@ -1,0 +1,134 @@
+#compdef conda
+#autoload
+
+# conda completion, for the package utility in the Anaconda python distro
+# based on the homebrew completion code
+
+_conda_all_envs() {
+    envs=($(conda info --envs | grep -Ev '^#|^$|\(root\)' | cut -d' ' -f1))
+}
+
+# TODO: local packages
+# TODO: remote packages
+
+local -a _1st_arguments
+_1st_arguments=(
+  'activate:Activate an env.'
+  "deactivate:Deactivate the currently active env [$CONDA_DEFAULT_ENV]"
+  'on:Put the root install in PATH'
+  'root-off:Remove the root install from PATH'
+  'off:Remove the root install and any active envs from PATH'
+  'info:Display information about current conda install.'
+  'help:Displays a list of available conda commands and their help strings.'
+  'list:List linked packages in a conda environment.'
+  'search:Search for packages and display their information.'
+  'create:Create a new conda environment from a list of specified packages.'
+  'install:Install a list of packages into a specified conda environment.'
+  'update:Update conda packages.'
+  'remove:Remove a list of packages from a specified conda environment.'
+  'package:Create a conda package in an environment. (ADVANCED)'
+  'pip:Call pip and create a conda package in an environment. (DEPRECATED)'
+  'skeleton:Build skeleton recipes for packages from popular package hosting sites.'
+  'share:Create a "share package" which may be cloned'
+  'clone:Clone a "share package" (created using the share command)'
+  'build:Build a package from recipe. (ADVANCED)'
+  'index:Updates repodata.json in channel directories. (ADVANCED)'
+)
+
+local expl
+local -a envs
+
+_arguments \
+  '(--help)--help[show the help message and quit]' \
+  '(--version)--version[show version information and quit]' \
+  '*:: :->subcmds' && return 0
+
+if (( CURRENT == 1 )); then
+  _describe -t commands "conda subcommand" _1st_arguments
+  return
+fi
+
+case "$words[1]" in
+  activate)
+    _conda_all_envs
+    _wanted formulae expl 'all environments' compadd -a envs ;;
+  info)
+    _arguments \
+      '(--help)--help[show help message and exit]' \
+      '(--all)--all[show all info (envs, license, system)]' \
+      '(--envs)--envs[list all known conda environments]' \
+      '(--license)--license[disply info about local conda licenses list]' \
+      '(--system)--system[list PATH/PYTHONPATH envs for debugging]' \
+    ;;
+  help)
+    # TODO: show list of commands
+    ;;
+  list)
+    _arguments \
+      '(--name)--name[name of environment]' \
+      '(--prefix)--prefix[full path to environment prefix]' \
+      '(--canonical)--canonical[output canonical names of packages only]' \
+    ;;
+  search)
+    _arguments \
+      '(--help)--help[show help message and exit]' \
+      '(--name)--name[name of environment]' \
+      '(--prefix)--prefix[full path to environment prefix]' \
+      '(--canonical)--canonical[output canonical names of packages only]' \
+      '(--verbose)--verbose[show available packages as blocks of data]' \
+      '(--channel)--channel[additional channel to search for packages]' \
+      '(--override-channels)--override-channels[do not search default/.condarc channels]' \
+    ;;
+  create)
+    _arguments \
+      '(--help)--help[show help message and exit]' \
+      "(--yes)--yes[don't ask for confirmation]" \
+      "(--dry-run)--dry-run[only display what would have been done]" \
+      '(--file)--prefix[full path to environment prefix]' \
+      '(--channel)--channel[additional channel to search for packages]' \
+      '(--override-channels)--override-channels[do not search default/.condarc channels]' \
+      '(--name)--name[name of environment]' \
+      '(--prefix)--prefix[full path to environment prefix]' \
+      '(--quiet)--quiet[no progress bar]' \
+    ;;
+  install)
+    _arguments \
+      '(--help)--help[show help message and exit]' \
+      "(--yes)--yes[don't ask for confirmation]" \
+      "(--dry-run)--dry-run[only display what would have been done]" \
+      "(--force)--force[force install; implies --no-deps]" \
+      '(--file)--prefix[full path to environment prefix]' \
+      "(--no-deps)--no-deps[don't install dependencies]" \
+      '(--channel)--channel[additional channel to search for packages]' \
+      '(--override-channels)--override-channels[do not search default/.condarc channels]' \
+      '(--name)--name[name of environment]' \
+      '(--prefix)--prefix[full path to environment prefix]' \
+      '(--quiet)--quiet[no progress bar]' \
+    ;; # TODO: complete remote packages
+  update)
+    _arguments \
+      '(--help)--help[show help message and exit]' \
+      "(--yes)--yes[don't ask for confirmation]" \
+      "(--dry-run)--dry-run[only display what would have been done]" \
+      '(--name)--name[name of environment]' \
+      '(--prefix)--prefix[full path to environment prefix]' \
+      '(--quiet)--quiet[no progress bar]' \
+      '(--channel)--channel[additional channel to search for packages]' \
+      '(--override-channels)--override-channels[do not search default/.condarc channels]' \
+    ;; # TODO: complete local packages
+  remove)
+    _arguments \
+      '(--help)--help[show help message and exit]' \
+      "(--yes)--yes[don't ask for confirmation]" \
+      "(--dry-run)--dry-run[only display what would have been done]" \
+      '(--all)--all[remove the entire env]' \
+      '(--features)--features[remove features instead of packages]' \
+      '(--channel)--channel[additional channel to search for packages]' \
+      '(--override-channels)--override-channels[do not search default/.condarc channels]' \
+      '(--name)--name[name of environment]' \
+      '(--prefix)--prefix[full path to environment prefix]' \
+      '(--quiet)--quiet[no progress bar]' \
+    ;; # TODO: complete local packages
+  package|skeleton|share|clone|build|index)
+    ;; # TODO
+esac
