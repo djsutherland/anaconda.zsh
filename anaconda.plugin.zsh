@@ -1,6 +1,7 @@
 if [[ -z $ANACONDA ]] && (( ! $+commands[conda] )); then
     function anaconda_prompt_info() { }
 else
+    fpath+="${0:h}"
     # find the anaconda root
     if [[ -n $ANACONDA ]]; then
         anaconda_root=$ANACONDA
