@@ -24,16 +24,18 @@ _1st_arguments=(
   'search:Search for packages and display their information.'
   'create:Create a new conda environment from a list of specified packages.'
   'install:Install a list of packages into a specified conda environment.'
-  'update:Update conda packages.'
+  'update:Updates conda packages to the latest compatible version.'
+  'upgrade:Alias for conda update.'
   'remove:Remove a list of packages from a specified conda environment.'
-  'package:Create a conda package in an environment. (ADVANCED)'
-  'pip:Call pip and create a conda package in an environment. (DEPRECATED)'
-  'skeleton:Build skeleton recipes for packages from popular package hosting sites.'
-  'share:Create a "share package" which may be cloned'
-  'clone:Clone a "share package" (created using the share command)'
-  'build:Build a package from recipe. (ADVANCED)'
-  'index:Updates repodata.json in channel directories. (ADVANCED)'
+  'uninstall:Alias for conda remove.'
+  'config:Modify configuration values in .condarc.'
+  'clean:Remove unused packages and caches.'
+  'package:Low-level conda package utility. (EXPERIMENTAL)'
+  'env:Utilities for managing full conda environments.'
+  'server:Anaconda Cloud command line manager'
+  'build:Tool for building conda packages.'
 )
+# TODO: other conda-build subcommands, if present
 
 local expl
 local -a envs
@@ -105,7 +107,7 @@ case "$words[1]" in
       '(--prefix)--prefix[full path to environment prefix]' \
       '(--quiet)--quiet[no progress bar]' \
     ;; # TODO: complete remote packages
-  update)
+  update|upgrade)
     _arguments \
       '(--help)--help[show help message and exit]' \
       "(--yes)--yes[don't ask for confirmation]" \
@@ -116,7 +118,7 @@ case "$words[1]" in
       '(--channel)--channel[additional channel to search for packages]' \
       '(--override-channels)--override-channels[do not search default/.condarc channels]' \
     ;; # TODO: complete local packages
-  remove)
+  remove|uninstall)
     _arguments \
       '(--help)--help[show help message and exit]' \
       "(--yes)--yes[don't ask for confirmation]" \
